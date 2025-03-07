@@ -1,6 +1,15 @@
 import { configureStore } from "@reduxjs/toolkit";
+import { setupListener } from "@reduxjs/toolkit/query";
+import api from "./api";
 
-// TODO: configure the store to use the API slice's auto-generated reducer and custom middleware.
-const store = configureStore();
+const store = configureStore({
+  reducer: {
+    [api.reducerPath]: api.reducer,
+  },
+
+  // data fetching, cache invalidation...
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(api.middleware),
+});
 
 export default store;
