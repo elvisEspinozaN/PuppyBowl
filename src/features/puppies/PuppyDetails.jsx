@@ -1,14 +1,27 @@
+import { useGetPuppyQuery, useDeletePuppyMutation } from "./puppySlice";
+
 /**
  * @component
  * Shows comprehensive information about the selected puppy, if there is one.
  * Also provides a button for users to remove the selected puppy from the roster.
  */
 export default function PuppyDetails({ selectedPuppyId, setSelectedPuppyId }) {
-  // TODO: Grab data from the `getPuppy` query
+  const {
+    data: puppy,
+    isLoading,
+    isError,
+    error,
+  } = useGetPuppyQuery(selectedPuppyId);
 
-  // TODO: Use the `deletePuppy` mutation to remove a puppy when the button is clicked
+  const [deletePuppy] = useDeletePuppyMutation();
 
-  function removePuppy(id) {
+  async function removePuppy(id) {
+    try {
+      await deletePuppy(id).unwrap();
+      setSelectedPuppyId(null);
+    } catch (E) {
+      console.error("Error deleting puppy: ", E);
+    }
     setSelectedPuppyId();
   }
 
@@ -21,6 +34,8 @@ export default function PuppyDetails({ selectedPuppyId, setSelectedPuppyId }) {
   //  2. A puppy has been selected, but results have not yet returned from the API.
   else if (isLoading) {
     $details = <p>Loading puppy information...</p>;
+  } else if (isError) {
+    $details = <p>Error loading puppy: {error.message}</p>;
   }
   // 3. Information about the selected puppy has returned from the API.
   else {
