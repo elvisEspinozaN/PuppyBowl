@@ -7,6 +7,7 @@ const api = createApi({
   reducerPath: "puppybowlApi",
   baseQuery: fetchBaseQuery({ baseUrl: `${API_URL}` }),
   tagTypes: ["Puppy"],
+  endpoints: () => ({}),
 });
 
 export default api;

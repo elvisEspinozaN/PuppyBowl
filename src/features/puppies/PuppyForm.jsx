@@ -7,14 +7,20 @@ import { useAddPuppyMutation } from "./puppySlice";
 export default function PuppyForm() {
   const [name, setName] = useState("");
   const [breed, setBreed] = useState("");
+  const [addPuppy, { isLoading, error }] = useAddPuppyMutation();
 
-  const {addPuppy, {isLoading, error}} = useAddPuppyMutation();
-
-  function postPuppy(event) {
+  async function postPuppy(event) {
     event.preventDefault();
-
     // Placeholder image w/ random photos of dogs
     const imageUrl = "https://loremflickr.com/200/300/dog";
+
+    try {
+      await addPuppy({ name, breed, imageUrl }).unwrap();
+      setName("");
+      setBreed("");
+    } catch (E) {
+      console.error("Error adding puppy: ", E);
+    }
   }
 
   return (
